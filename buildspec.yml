@@ -1,0 +1,39 @@
+version: 0.2
+
+env:
+  variables:
+    APP_NAME: "twitter-api"
+  parameter-store:
+    ECR_REPOSITORY: "/codebuild/ecs/twitter-api/ecr"
+    ECS_CLUSTER: "/codebuild/ecs/twitter-api/cluster"
+    DOCKER_IMAGE_BASE: "/codebuild/docker_image/node"
+
+phases:
+  install: 
+    runtime-versions: 
+      docker: 18
+  pre_build:
+    commands:
+      - echo Logando no Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - REPOSITORY_URI=${ECR_REPOSITORY}
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+      - ECS_SERVICE=${APP_NAME}
+  build:
+    commands:
+      - echo Build iniciado em `date`
+      - echo Criando imagem docker... $REPOSITORY_URI
+      - docker build --build-arg DOCKER_IMAGE_BASE=$DOCKER_IMAGE_BASE -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo "Build finalizado em `date`"
+      - echo Fazendo push para ECR...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - aws ecs update-service --force-new-deployment --cluster $ECS_CLUSTER --service $ECS_SERVICE
+cache:
+  paths:
+   - 'node_modules/**/*'
