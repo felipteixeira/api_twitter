@@ -36,4 +36,4 @@ phases:
       - aws ecs update-service --force-new-deployment --cluster $ECS_CLUSTER --service $ECS_SERVICE
 cache:
   paths:
-   - 'node_modules/**/*' 
+   - 'node_modules/**/*'
