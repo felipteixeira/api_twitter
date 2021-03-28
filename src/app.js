@@ -12,7 +12,7 @@ app.use(cors());
 
 
 app.get("/tweet", (request, response) => {
-  return axios.get(`https://api.twitter.com/2/tweets/search/recent?query=${encodeURIComponent(`#${request.query.hashtag}`)}&max_results=15&expansions=author_id&user.fields=public_metrics`,
+  return axios.get(`https://api.twitter.com/2/tweets/search/recent?query=${encodeURIComponent(`#${request.query.hashtag}`)}&max_results=14&expansions=author_id&user.fields=public_metrics`,
     { headers: { Authorization: token } }
   ).then(result => {
     response.status(200).send(result.data)
