@@ -1,7 +1,7 @@
-Application building with react.js.
+Application building with node.js.
 
 yarn install
 to install the dependencies
 
 yarn start
-to run the app.
+to run the api.
