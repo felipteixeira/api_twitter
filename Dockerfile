@@ -1,5 +1,4 @@
-ARG DOCKER_IMAGE_BASE
-FROM $DOCKER_IMAGE_BASE
+FROM node:14
 
 WORKDIR /app
 COPY package.json yarn.lock ./

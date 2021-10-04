@@ -21,4 +21,6 @@ app.get("/tweet", (request, response) => {
   });
 });
 
+app.get('/status', (req, res) => res.send({}).status(200))
+
 module.exports = app;
